@@ -1,3 +1,11 @@
+body {
+  height: 100vh;
+  background: yellow;
+  background: url("./component/back.png");
+}
+p {
+  font-size: 1.5rem;
+}
 .remove-btn {
   margin-right: 1rem;
 }
@@ -15,4 +23,17 @@
 .fade-exit-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in;
+}
+footer {
+  position: absolute;
+  color: yellow;
+  background-color: hsl(0, 0%, 0%);
+  width: 100%;
+  text-align: center;
+  padding: 10px 2rem;
+  font-size: 1.2rem;
+  bottom: 0px;
+}
+.logo {
+  width: 40px;
 }

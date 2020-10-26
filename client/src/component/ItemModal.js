@@ -26,8 +26,9 @@ class ItemModal extends Component {
      e.preventDefault();
 
      const newItem = {
-         name:this.state.name,
-         place:this.state.place
+         itemName:this.state.name,
+         place:this.state.place,
+         id:this.props.authID
      }
      this.props.addItem(newItem);
      this.toggle();
@@ -50,9 +51,9 @@ class ItemModal extends Component {
         <Form onSubmit={this.onSubmit}>
         <FormGroup>
         <Label for="item">Item</Label>
-        <Input type="text" name="name" id="item" placeholder="Add item" onChange={this.onChange}/>
+        <Input type="text" name="name" id="item" placeholder="eg:keys,bills" onChange={this.onChange}/>
         <Label for="place">Place</Label>
-        <Input type="text" name="place" id="place" placeholder="where ?" onChange={this.onChange}/>
+        <Input type="text" name="place" id="place" placeholder="where?" onChange={this.onChange}/>
         <Button color="dark" style={{marginTop:'2rem'}} block>Make a Recall</Button>
         </FormGroup>
         </Form>
@@ -62,5 +63,9 @@ class ItemModal extends Component {
       )
   }
 }
- 
-export default connect(null,{addItem})(ItemModal);
+ const mapStateToProps = (state) =>{
+  return {
+      authID:state.auth.authID
+  }
+ }
+export default connect(mapStateToProps,{addItem})(ItemModal);

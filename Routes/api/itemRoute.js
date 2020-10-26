@@ -2,16 +2,23 @@ const express = require("express");
 const router = express.Router();
 
 //Item mODEL
-const Item = require("../../models/item");
+const List = require("../../models/item");
 
 // @route GET api/items
 // @desc Get All items
 // @acsess Public 
 
-router.get('/',(req,res)=> {
-   Item.find()
-   .sort({at:1}) 
-   .then(items=>res.json(items))
+router.get('/:id',async(req,res)=> {
+  /* */
+  const { id } =req.params
+  try{
+  const eachList = await List.findOne({ user:id})
+  res.json(eachList.items);
+  }
+  catch(e){
+      console.log(e);
+  }
+
 });
 
 // @route POST api/items
@@ -19,16 +26,18 @@ router.get('/',(req,res)=> {
 // @acsess Public
 
 router.post('/',async (req,res)=> {
-    console.log(req.body);
-    try {
-     const eachItem = await Item.create({
-         itemName:req.body.name,
-         itemPlace:req.body.place,
-     })
-     res.status(200).json(eachItem)
+   /*  */
+   const {itemName , place , id } =req.body
+    try{
+    const eachList = await List.findOne({ user:id})
+    eachList.items.push({itemName,place})
+    eachList.markModified(eachList.items);
+    console.log(eachList);
+    await eachList.save()
+    res.json(eachList.items);
     }
     catch(e){
-          console.log(e);
+        console.log(e);
     }
  });
 
@@ -36,15 +45,28 @@ router.post('/',async (req,res)=> {
 // @desc delete a post
 // @acsess Public
 
-router.delete('/:id',async (req,res)=> {
-    try {
-    const deleteItem = await Item.findById(req.params.id);
-    await deleteItem.remove();
-    res.json({success:true});
+router.delete('/:id/:authID',async (req,res)=> {
+  console.log(req.params)
+  const {authID , id } = req.params;
+  try{
+    const getDoc = await List.findOne({user:authID});
+   const indexToDelete = getDoc.items.findIndex(item =>item._id == id);
+    console.log(indexToDelete);
+    getDoc.items.splice(indexToDelete,1);
+    if(getDoc.items.length == 0){
+      getDoc.items.set();
+      await getDoc.save();  
+      res.status(200).json(id)
     }
-    catch(e){
-     res.status(400).json({success:false})    
+    else {
+    getDoc.markModified(getDoc.items);
+    await getDoc.save();
+    res.status(200).json(id)
     }
+  }
+  catch(e){
+      console.log(e);
+  }
  });
 
 
